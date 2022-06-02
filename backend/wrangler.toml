@@ -1,0 +1,9 @@
+name = "backend-worker"
+main = "dist/worker.js"
+account_id = ""
+workers_dev = true
+compatibility_date = "2022-06-02"
+
+[build]
+command = "npm install && npm run build"
+
