@@ -1,5 +1,7 @@
-import { handleRequest } from './handler'
+import router from './router'
 
-addEventListener('fetch', (event) => {
-  event.respondWith(handleRequest(event.request))
+const errorHandler = () => new Response('Server Error.', { status: 500 })
+
+addEventListener('fetch', (event: FetchEvent) => {
+  event.respondWith(router.handle(event.request).catch(errorHandler))
 })
