@@ -20,4 +20,18 @@ export class Product {
     this.defaultCurrency = defaultCurrency
     this.availableCurrencies = availableCurrencies
   }
+
+  cheapestProductOption(currency: string): number {
+    return Math.min(
+      ...this.options
+        .flatMap((option) =>
+          option.units.flatMap((unit) =>
+            unit.pricing
+              .filter((pricing) => pricing.currency === currency)
+              .map((pricing) => pricing),
+          ),
+        )
+        .map((pricing) => pricing.price),
+    )
+  }
 }
