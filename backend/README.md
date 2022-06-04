@@ -37,3 +37,5 @@ If you run into issues with this specific project, please feel free to file an i
 ## ⚠️ Caveats
 
 The `service-worker-mock` used by the tests is not a perfect representation of the Cloudflare Workers runtime. It is a general approximation. We recommend that you test end to end with `wrangler dev` in addition to a [staging environment](https://developers.cloudflare.com/workers/tooling/wrangler/configuration/environments/) to test things before deploying.
+
+If the request origin is different than `localhost:3000` the `Access-Control-Allow-Origin` header should be changed to the correct value.
