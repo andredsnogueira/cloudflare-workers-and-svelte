@@ -14,18 +14,12 @@ export const getProducts = (): Response => {
     currency: desiredCurrency,
   }))
 
-  return new Response(
-    JSON.stringify({
-      defaultCurrency: desiredCurrency,
-      products: productsDTO,
-    }),
-    {
-      headers: {
-        'content-type': 'application/json;charset=UTF-8',
-        'Access-Control-Allow-Origin': 'http://localhost:3000',
-      },
+  return new Response(JSON.stringify(productsDTO), {
+    headers: {
+      'content-type': 'application/json;charset=UTF-8',
+      'Access-Control-Allow-Origin': 'http://localhost:3000',
     },
-  )
+  })
 }
 
 export const getProductById = (request: Request): Response => {
