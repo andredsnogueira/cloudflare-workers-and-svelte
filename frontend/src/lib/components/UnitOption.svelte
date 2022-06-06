@@ -41,6 +41,7 @@
         name="counter"
         id="counter"
         value="0"
+        min="0"
       />
     </div>
   </div>
