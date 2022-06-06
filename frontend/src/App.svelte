@@ -8,11 +8,17 @@
 
 <Router>
   <main>
-    <Route path="/" component={Index} />
-    <Route path="/products/:id" let:params>
+    <Route path="/">
+      <Index />
+    </Route>
+    <Route path="/products/:id" let:params primary={false}>
       <ProductInfo id={params.id} />
     </Route>
-    <Route path="/contact-form" component={ContactForm} />
-    <Route path="/success" component={Success} />
+    <Route path="/contact-form">
+      <ContactForm />
+    </Route>
+    <Route path="/success">
+      <Success />
+    </Route>
   </main>
 </Router>
