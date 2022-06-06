@@ -6,9 +6,10 @@
   export let currency: string;
 
   const pricing = unit.pricing.find((pricing) => pricing.currency === currency);
-  const priceLabel = `${pricing.currency} ${
-    pricing.price / 10 ** pricing.currencyPrecision
-  }`;
+  const priceLabel = `${pricing.currency} ${(
+    pricing.price /
+    10 ** pricing.currencyPrecision
+  ).toFixed(2)}`;
 
   const handleUnitCountChange = (e: Event) => {
     const target = e.target as HTMLInputElement;
