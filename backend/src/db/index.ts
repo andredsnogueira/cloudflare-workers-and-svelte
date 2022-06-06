@@ -15,7 +15,7 @@ const products = [
     [
       new Option(
         '611b8f54-0c7e-4eec-9e68-4714a8311766',
-        true,
+        false,
         'VIP',
         [ContactField.fullName],
         [
@@ -31,7 +31,7 @@ const products = [
       ),
       new Option(
         '7dac9236-7258-4cb5-b07d-249dd0171ac4',
-        false,
+        true,
         'Non-VIP',
         [ContactField.fullName],
         [
