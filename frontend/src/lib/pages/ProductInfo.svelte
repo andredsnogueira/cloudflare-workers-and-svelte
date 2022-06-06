@@ -1,8 +1,14 @@
 <script lang="ts">
+  import { Link } from 'svelte-navigator';
   import { get } from 'svelte/store';
   import Spinner from '../components/Spinner.svelte';
   import UnitOption from '../components/UnitOption.svelte';
-  import { availableCurrencies, bookings, defaultCurrency } from '../stores';
+  import {
+    availableCurrencies,
+    booking as bookingStore,
+    defaultCurrency,
+    product as productStore,
+  } from '../stores';
   import type { Booking, Option, Product, Unit } from '../types';
 
   export let id: string;
@@ -10,13 +16,11 @@
   let currencySelected: string | null = null;
   let totalProductBookingPrice: number = 0;
 
-  bookings.subscribe((allBookings: Booking[]) => {
-    allBookings.forEach((booking: Booking) => {
-      if (booking.productId === id) {
-        totalProductBookingPrice =
-          booking.pricing.price / 10 ** booking.pricing.currencyPrecision;
-      }
-    });
+  bookingStore.subscribe((booking: Booking) => {
+    if (booking) {
+      totalProductBookingPrice =
+        booking.pricing.price / 10 ** booking.pricing.currencyPrecision;
+    }
   });
 
   const fetchProduct = async (id: string): Promise<Product> => {
@@ -27,43 +31,43 @@
     currencySelected = product.defaultCurrency;
     defaultCurrency.set(product.defaultCurrency);
     availableCurrencies.set(product.availableCurrencies);
+    productStore.set(product);
 
     return product;
   };
 
   const handleOptionChange = (option: any) => {
     optionSelected = option;
-    totalProductBookingPrice = 0.0;
     clearProductBooking();
   };
 
   const handleCurrencyChange = () => {
     defaultCurrency.set(currencySelected);
-    totalProductBookingPrice = 0.0;
     clearProductBooking();
   };
 
   const clearProductBooking = () => {
-    bookings.update((bookings) => {
-      return bookings.filter((booking) => booking.productId !== id);
-    });
+    totalProductBookingPrice = 0.0;
+    bookingStore.update((_) => null);
   };
 
   const handleUnitQuantityChange = (unit: Unit, quantity: number) => {
-    const tmpBookings = get(bookings);
-    const booking = tmpBookings.find(
-      (booking) => booking.optionId === optionSelected.id
-    );
+    if (quantity <= 0) {
+      clearProductBooking();
+      return;
+    }
 
-    if (booking) {
-      const unitItem = booking.unitItems.find(
+    const tmpBooking = get(bookingStore);
+
+    if (tmpBooking) {
+      const unitItem = tmpBooking.unitItems.find(
         (unitItem) => unitItem.unitId === unit.id
       );
 
       if (unitItem) {
         unitItem.quantity = quantity;
       } else {
-        booking.unitItems.push({
+        tmpBooking.unitItems.push({
           unitId: unit.id,
           quantity: quantity,
           price: unit.pricing.find(
@@ -72,17 +76,9 @@
         });
       }
 
-      booking.pricing.price = recalculateBookingTotalPrice(booking);
+      tmpBooking.pricing.price = recalculateBookingTotalPrice(tmpBooking);
 
-      bookings.update((bs) =>
-        bs.map((b) => {
-          if (b.id === booking.id) {
-            return booking;
-          }
-
-          return b;
-        })
-      );
+      bookingStore.update((bs) => bs);
     } else {
       const tmpPricing = unit.pricing.find(
         (pricing) => pricing.currency === currencySelected
@@ -104,7 +100,7 @@
 
       newBooking.pricing.price = recalculateBookingTotalPrice(newBooking);
 
-      bookings.set([...tmpBookings, newBooking]);
+      bookingStore.set(newBooking);
     }
   };
 
@@ -189,6 +185,16 @@
             {/key}
           {/each}
         </div>
+      </div>
+      <div class="mt-8">
+        <Link to="/contact-form">
+          <button
+            type="submit"
+            class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          >
+            Book now
+          </button>
+        </Link>
       </div>
     </div>
     <div
